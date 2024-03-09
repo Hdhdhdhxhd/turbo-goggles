@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected Content</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #000;
+            color: #fff;
+        }
+        input[type="password"] {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00cc00;
+        }
+        #protectedContent {
+            display: none;
+        }
+        #loginError {
+            color: #ff0000;
+            margin-top: 10px;
+        }
+        #names-list {
+            margin-top: 20px;
+            color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <h1>Protected Content</h1>
+    <div id="loginForm">
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password"><br>
+        <button type="button" onclick="login()">Login</button>
+        <div id="loginError"></div>
+    </div>
+
+    <div id="protectedContent">
+        <h2>Generate Available YouTube Channel Names</h2>
+        <button id="generateButton" onclick="generateAndCheckName()">Generate</button>
+        <div id="names-list"></div>
+    </div>
+
+    <script>
+        function login() {
+            const password = document.getElementById("password").value;
+            const correctPassword = "ytnamesprem"; // Change this to your desired password
+            const loginError = document.getElementById("loginError");
+            const loginForm = document.getElementById("loginForm");
+            const protectedContent = document.getElementById("protectedContent");
+
+            if (password === correctPassword) {
+                loginForm.style.display = "none"; // Hide login form
+                protectedContent.style.display = "block"; // Show protected content
+                loginError.innerText = ""; // Clear error message
+            } else {
+                loginError.innerText = "Incorrect password. Please try again.";
+            }
+        }
+
+        async function generateChannelName() {
+            const characters = 'abcdefghijklmnopqrstuvwxyz0123456789_';
+            const nameLength = Math.floor(Math.random() * 2) + 4; // Random length between 4 and 5
+            let name = '';
+            for (let i = 0; i < nameLength; i++) {
+                name += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return name;
+        }
+
+        async function checkAvailability(name) {
+            const apiKey = "AIzaSyA3h-EEyZt15uHtyg9b09-YbeJpMLguf4E";
+            const url = `https://www.googleapis.com/youtube/v3/channels?part=id&forUsername=${name}&key=${apiKey}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            return !("items" in data && data.items.length > 0);
+        }
+
+        async function generateAndCheckName() {
+            const button = document.getElementById("generateButton");
+            const namesList = document.getElementById("names-list");
+            button.disabled = true; // Disable the button
+            namesList.innerText = ''; // Clear previous names
+
+            const name = await generateChannelName();
+            const isAvailable = await checkAvailability(name);
+            if (isAvailable) {
+                const listItem = document.createElement("div");
+                listItem.textContent = name;
+                namesList.appendChild(listItem);
+            }
+            button.disabled = false; // Re-enable the button
+        }
+    </script>
+</body>
+</html>
