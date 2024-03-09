@@ -73,7 +73,7 @@
 
         async function generateChannelName() {
             const characters = 'abcdefghijklmnopqrstuvwxyz0123456789_';
-            const nameLength = Math.floor(Math.random() * 2) + 4; // Random length between 4 and 5
+            const nameLength = 4; // Fixed length of 4 characters
             let name = '';
             for (let i = 0; i < nameLength; i++) {
                 name += characters.charAt(Math.floor(Math.random() * characters.length));
